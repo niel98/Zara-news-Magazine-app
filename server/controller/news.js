@@ -13,17 +13,9 @@ const getNews = async (_, res) => {
 
 const createNews = async (req, res) => {
     try {
-        const news = {
-            avatar: req.file.avatar,
-            title: req.body.title,
-            content: req.body.content,
-            category: req.body.category 
-        }
-    
-        await News.create(news)
-        console.log('New news article created')
-        res.status(201).json({ success: true, message: 'New news article created'})
+        
     } catch (error) {
+        console.log(err.message)
         res.status(500).json({ success: false, message: 'Internal server error' })
     }
 }

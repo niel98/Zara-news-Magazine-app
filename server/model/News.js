@@ -6,6 +6,9 @@ const NewsSchema = new Schema({
     avatar: {
         type: String
     },
+    cloudinary_id: {
+        type: String
+    },
     title: {
         type: String
     },
