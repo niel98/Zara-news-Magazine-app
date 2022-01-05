@@ -9,7 +9,7 @@ const router = express.Router()
 
 //All routes begin from /news
 router.get('/getNews', getNews)
-router.get('/newsCount', findNewsById)
+router.get('/newsCount/:id', findNewsById)
 
 //creating a new News article
 router.post('/post', upload.single('image'), async(req, res) => {
