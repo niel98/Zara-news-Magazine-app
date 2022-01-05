@@ -3,13 +3,15 @@ const upload = require('../utils/multer')
 const cloudinary = require('../utils/cloudinary')
 const News = require('../model/News')
 
-const { getNews } = require('../controller/news')
+const { getNews, findNewsById } = require('../controller/news')
 
 const router = express.Router()
 
 //All routes begin from /news
 router.get('/getNews', getNews)
+router.get('/newsCount', findNewsById)
 
+//creating a new News article
 router.post('/post', upload.single('image'), async(req, res) => {
     try {
         //Upload the image to cloudinary

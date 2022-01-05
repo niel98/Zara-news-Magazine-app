@@ -18,6 +18,10 @@ const NewsSchema = new Schema({
     category: {
         type: String
     },
+    count: {
+        type: Number,
+        default: count = 0
+    },
     Date: {
         type: Date,
         default: Date.now()
