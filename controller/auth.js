@@ -8,10 +8,15 @@ const signUp = async (req, res) => {
     try {
         //Check if the user exist on the DB
         let user = await User.findOne({ email: req.body.email })
+        // console.log('User: ', user)
+        let username = await User.findOne({ username: req.body.username })
 
         if (user) {
-            return res.status(400).send('User already exists')
-        } else {
+            return res.status(400).send('User with the email already exists')
+        }
+        if (username) {
+            return res.status(400).send('User with the username already exists')
+        }
             user = new User({
                 username: req.body.username,
                 email: req.body.email,
@@ -22,7 +27,6 @@ const signUp = async (req, res) => {
 
         console.log('New user signed up successfully')
         res.status(201).json({ success: true, message: 'New User signed up successfully', data: user })
-        }
     } catch (err) {
         console.log(err.message)
         res.status(500).json({ success: false, message: 'Internal server error'})

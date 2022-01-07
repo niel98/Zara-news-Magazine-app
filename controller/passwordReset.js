@@ -22,6 +22,7 @@ const sendPassReset = async (req, res) => {
         }
 
         const link = `${process.env.BASE_URL}/password-reset/${user._id}/${token.token}`
+        // let details = { id: user._id, token: token }
         await sendEmail(user.email, 'Password Reset', link)
 
         res.status(200).send('Password reset link sent to your email')
