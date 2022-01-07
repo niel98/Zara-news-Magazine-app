@@ -1,5 +1,6 @@
 const express = require('express')
 const crypto = require('crypto')
+const argon2 = require('argon2')
 const User = require('../model/User')
 const Token = require('../model/Token')
 const sendEmail = require('../utils/sendMail')
@@ -30,4 +31,28 @@ const sendPassReset = async (req, res) => {
     }
 }
 
-module.exports = sendPassReset
+const resetPassword = async (req, res) => {
+    try {
+        //Check if the userId is valid
+        const user = await User.findOne({ userId: req.params.userId })
+        if (!user) {
+            return res.status(400).send('Invalid link or expired')
+        }
+
+        const token = await Token.findOne({ userId: user._id, token: req.params.token })
+        if (!token) {
+            return res.status(400).send('Invalid link or expired')
+        }
+
+        user.password = await argon2.hash(req.body.password)
+        await user.save()
+        await token.delete()
+
+        res.status(200).send('Password reset successful')
+    } catch (err) {
+        console.log(err.message)
+        res.status(500).send('Internal server error')
+    }
+}
+
+module.exports = { sendPassReset, resetPassword }
