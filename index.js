@@ -4,6 +4,7 @@ const conn = require('./model/db')
 
 const newsRoute = require('./routes/news')
 const authRoute = require('./routes/auth')
+const passResetRoute = require('./routes/passwordReset')
 
 require('dotenv').config()
 require('colors')
@@ -20,6 +21,7 @@ const PORT = process.env.PORT || 5000
 
 app.use('/news', newsRoute)
 app.use('/auth', authRoute)
+app.use('/reset', passResetRoute)
 
 app.get('/', (_, res) => {
     res.send('Hello World from Zarah Magazine!')

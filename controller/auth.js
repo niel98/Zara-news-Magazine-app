@@ -1,5 +1,8 @@
 const User = require("../model/User")
 const argon2 = require('argon2')
+const jwt = require('jsonwebtoken')
+const _ = require('lodash')
+require('dotenv').config()
 
 const signUp = async (req, res) => {
     try {
@@ -7,8 +10,7 @@ const signUp = async (req, res) => {
         let user = await User.findOne({ email: req.body.email })
 
         if (user) {
-            res.status(400).json({ success: false, message: 'User already exists', data: user })
-            return
+            return res.status(400).send('User already exists')
         } else {
             user = new User({
                 username: req.body.username,
@@ -45,7 +47,9 @@ const signIn = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Incorrect email or password!'})
         }
 
-        res.status(200).json({ success: true, message: 'User signed in successfully.', data: user })
+        const token = jwt.sign({ _id: user.id }, process.env.JWT_SECRET)
+
+        res.status(200).json({ success: true, message: 'User signed in successfully.', data: { user:user, token } })
     } catch (err) {
         console.log(err.message)
         res.status(500).json({ success: false, message: 'Internal server error'})
