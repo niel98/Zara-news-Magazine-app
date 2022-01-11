@@ -3,7 +3,7 @@ const FlutterWave = require('flutterwave-node-v3')
 const FLW_services = require('../services/flutterwave.services')
 
 const transRef = `zara-pay-tx-${crypto.randomBytes(32).toString('hex')}`
-let base_url = 'http://localhost:5000'
+let base_url = 'https://zarah-magazine-app.herokuapp.com' || 'http://localhost:5000'
 
 // const baseUrl = process.env.FLUTTERWAVE_BASE_URL
 const FLW_pubKey = process.env.FLUTTERWAVE_PUBLIC_KEY
