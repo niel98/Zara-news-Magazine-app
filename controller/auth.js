@@ -8,8 +8,8 @@ const signUp = async (req, res) => {
     try {
         //Check if the user exist on the DB
         let user = await User.findOne({ email: req.body.email })
-        // console.log('User: ', user)
         let username = await User.findOne({ username: req.body.username })
+        let phone = await User.findOne({ phone: req.body.phone })
 
         if (user) {
             return res.status(400).send('User with the email already exists')
@@ -17,9 +17,13 @@ const signUp = async (req, res) => {
         if (username) {
             return res.status(400).send('User with the username already exists')
         }
+        if (phone) {
+            return res.status(400).send('User with the Phone number already exists')
+        }
             user = new User({
                 username: req.body.username,
                 email: req.body.email,
+                phone: req.body.phone,
                 password: await argon2.hash(req.body.password)
             })
 
