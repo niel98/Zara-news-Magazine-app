@@ -13,7 +13,7 @@ const flw = new FlutterWave(FLW_pubKey, FLW_secKey)
 
 const payment_wallet = async (req, res) => {
     const currency = 'NGN'
-    const amount = parseInt(req.body.amount)
+    const amount = 100
     const trans_ref = transRef
 
     const payload = {
