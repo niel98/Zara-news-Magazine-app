@@ -36,7 +36,7 @@ const payment_wallet = async (req, res) => {
 
     const response = await FLW_services.initiateTransaction(payload)
     console.log('Response => ', response)
-    return res.redirect(response)
+    return res.status(200).send(response)
 }
 
 const verify_payment_wallet = async (req, res) => {
