@@ -2,8 +2,6 @@ require('dotenv').config()
 const FlutterWave = require('flutterwave-node-v3')
 const axios = require('axios')
 
-const { payment_wallet, verify_payment_wallet } = require('../controller/payment')
-
 const baseUrl = process.env.FLUTTERWAVE_BASE_URL
 const FLW_pubKey = process.env.FLUTTERWAVE_PUBLIC_KEY
 const FLW_secKey = process.env.FLUTTERWAVE_SECRET_KEY
@@ -32,7 +30,7 @@ const verifyTransaction = async (id) => {
     try {
         const response = await axios.get(`${baseUrl}/transactions/${id}/verify`, options)
         console.log('Verify Response => ', response.data)
-        return response.data.data.link
+        return response.data
     } catch (err) {
         console.log(err.message)
     }

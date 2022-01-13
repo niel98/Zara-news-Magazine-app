@@ -7,6 +7,8 @@ const authRoute = require('./routes/auth')
 const passResetRoute = require('./routes/passwordReset')
 const paymentRoute = require('./routes/payment')
 
+const verifyToken = require('./middleware/authJwt')
+
 require('dotenv').config()
 require('colors')
 
@@ -23,7 +25,7 @@ const PORT = process.env.PORT || 5000
 app.use('/news', newsRoute)
 app.use('/auth', authRoute)
 app.use('/reset', passResetRoute)
-app.use('/pay_wallet', paymentRoute)
+app.use('/pay_wallet', [verifyToken], paymentRoute)
 
 app.get('/', (_, res) => {
     res.send('Hello World from Zarah Magazine!')
