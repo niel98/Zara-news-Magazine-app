@@ -24,7 +24,7 @@ const payment_wallet_mobile = async (req, res) => {
     try {
         const currency = 'NGN'
         const amount = 100
-        const trans_ref = transRef
+        const trans_ref = transRef()
 
     const transaction = await Transactions.create({
         user: req.user.id,
