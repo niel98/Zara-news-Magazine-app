@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const User = require('../model/User')
+// const User = require('../model/User')
 
 const TransactionSchema = new mongoose.Schema({
     user: {

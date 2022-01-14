@@ -1,6 +1,7 @@
 const News = require("../model/News");
 const escapeString = require("escape-string-regexp");
 const User = require("../model/User");
+const ReadList = require('../model/ReadList')
 
 const getNews = async (req, res) => {
   try {
@@ -54,10 +55,29 @@ const findNewsById = async (req, res) => {
 
 const increaseUserNewsCount = async(req, res) => {
   try {
-    const user = await User.findById(req.user._id)
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'User not found'})
+    const news = await News.findById(req.params.newsId)
+    if (!news) {
+      return res.status(404).json({ success: false, message: 'News not found'})
     }
+
+    news.count +=1
+
+    await news.save()
+
+    const readNewsId = await ReadList.findOne({ userId: req.user._id, newsId: req.params.newsId })
+    if(!readNewsId) {
+      await ReadList.create({
+        userId: req.user._id,
+        newsId: req.params.newsId,
+        count: 1
+      })
+    } else {
+      readNewsId.count += 1
+
+      await readNewsId.save()
+    }
+
+    const user = await User.findById(req.user._id)
 
     //increment the news count
     user.newsCount +=1
