@@ -20,6 +20,19 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 8
+    },
+    newsCount: {
+        type: Number,
+        default: 0
+    },
+    subscription: {
+        isSubscribed: {
+            type: Boolean,
+            default: false
+        },
+        expiresIn: {
+            type: Date
+        }
     }
 })
 

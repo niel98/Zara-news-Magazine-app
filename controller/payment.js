@@ -1,9 +1,18 @@
-const crypto = require('crypto')
+const moment = require('moment')
 const FlutterWave = require('flutterwave-node-v3')
 const FLW_services = require('../services/flutterwave.services')
 const Transactions = require('../model/Transactions')
+const User = require('../model/User')
 
-const transRef = `zara-pay-tx-${crypto.randomBytes(32).toString('hex')}`
+const moment = require('moment')
+
+const transRef = () => {
+    const time = moment().format('YYY-MM-DD hh:mm:ss')
+    const rand = Math.floor(Math.random() * Date.now())
+
+    return `Zarah|${time.replace(/[\-]|[\s]|[\:]/g, '')}|${rand}`
+}
+
 let base_url = 'https://zarah-magazine-app.herokuapp.com' || 'http://localhost:5000'
 
 // const baseUrl = process.env.FLUTTERWAVE_BASE_URL
@@ -78,7 +87,6 @@ const verify_payment_wallet = async (req, res) => {
     try {
         const id = req.query.transaction_id
         const tx_ref = req.query.tx_ref
-        console.log(`id: ${id}, tx_ref: ${tx_ref}`)
 
     const transaction = await Transactions.findOne({ trans_ref: tx_ref, status: 'initiated' })
 
@@ -93,7 +101,18 @@ const verify_payment_wallet = async (req, res) => {
         if (verify.data.status === 'successful') {
             return res.status(200).json({ success: true, message: 'Transaction successful'})
         }
-        // return res.status(500).send(verify.data.processor_response)
+        
+        //Update subscription status of user to be true
+        const user = await User.findById(req.user._id)
+        if (!user) {
+            return res.status(404).send('User is invalid.')
+        }
+        
+        const expiresIn = moment().add(30, 'days').format
+        user.subscription.isSubscribed = true
+        user.subscription.expiresIn = new Date(expiresIn)
+
+        await user.save()
     } else {
         transaction.status ='failed'
         await transaction.save()

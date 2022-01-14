@@ -1,5 +1,6 @@
 const News = require("../model/News");
 const escapeString = require("escape-string-regexp");
+const User = require("../model/User");
 
 const getNews = async (req, res) => {
   try {
@@ -51,6 +52,27 @@ const findNewsById = async (req, res) => {
   }
 };
 
+const increaseUserNewsCount = async(req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found'})
+    }
+
+    //increment the news count
+    user.newsCount +=1
+
+    await user.save()
+
+    console.log('News count Increased')
+    return res.status(200).json({ success: true, message: `News count increased to ${user.newsCount}`})
+
+  } catch (err) {
+    console.log(err.message)
+    res.status(500).send('Internal server error')
+  }
+}
+
 const createNews = async (req, res) => {
   try {
   } catch (error) {
@@ -59,4 +81,4 @@ const createNews = async (req, res) => {
   }
 };
 
-module.exports = { getNews, createNews, findNewsById };
+module.exports = { getNews, createNews, findNewsById, increaseUserNewsCount };

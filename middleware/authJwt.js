@@ -22,6 +22,11 @@ const verifyToken = async (req, res, next) => {
             }
 
             let user = await User.findOne({ _id: decoded._id })
+            if (new Date().getTime() < new Date(user.subscription.expiresIn).getTime()) {
+                user.subscription.isSubscribed = false
+
+                await user.save()
+            }
             req.user = user
             next()
         })
