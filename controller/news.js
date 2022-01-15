@@ -24,34 +24,34 @@ const getNews = async (req, res) => {
   }
 };
 
-const findNewsById = async (req, res) => {
-  try {
-    const id = req.params.id;
+// const findNewsById = async (req, res) => {
+//   try {
+//     const id = req.params.id;
 
-    //Fetching the news Article
-    let newsArticle = await News.findOne({ _id: id });
-    console.log("Visitors: ", JSON.stringify(newsArticle));
+//     //Fetching the news Article
+//     let newsArticle = await News.findOne({ _id: id });
+//     console.log("Visitors: ", JSON.stringify(newsArticle));
 
-    if (!newsArticle) {
-      return res
-        .status(404)
-        .send({ success: false, message: "News with ID not found" });
-    }
+//     if (!newsArticle) {
+//       return res
+//         .status(404)
+//         .send({ success: false, message: "News with ID not found" });
+//     }
 
-    //Increment the news count
-    newsArticle.count += 1;
+//     //Increment the news count
+//     newsArticle.count += 1;
 
-    await newsArticle.save();
+//     await newsArticle.save();
 
-    console.log(`News read ${newsArticle.count} times`);
-    res
-      .status(200)
-      .json({ success: true, message: `News read ${newsArticle.count} times` });
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
-};
+//     console.log(`News read ${newsArticle.count} times`);
+//     res
+//       .status(200)
+//       .json({ success: true, message: `News read ${newsArticle.count} times` });
+//   } catch (err) {
+//     console.log(err.message);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// };
 
 const increaseUserNewsCount = async(req, res) => {
   try {
@@ -101,4 +101,4 @@ const createNews = async (req, res) => {
   }
 };
 
-module.exports = { getNews, createNews, findNewsById, increaseUserNewsCount };
+module.exports = { getNews, createNews, increaseUserNewsCount };

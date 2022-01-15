@@ -3,13 +3,12 @@ const upload = require("../utils/multer");
 const cloudinary = require("../utils/cloudinary");
 const News = require("../model/News");
 
-const { getNews, findNewsById, increaseUserNewsCount } = require("../controller/news");
+const { getNews, increaseUserNewsCount } = require("../controller/news");
 
 const router = express.Router();
 
 //All routes begin from /news
 router.get("/getNews", getNews);
-router.post("/newsCount/:id", findNewsById);
 router.put('/userNewsCount/:newsId', increaseUserNewsCount)
 
 //creating a new News article

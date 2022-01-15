@@ -22,7 +22,7 @@ conn()
 
 const PORT = process.env.PORT || 5000
 
-app.use('/news', [verifyToken], newsRoute)
+app.use('/news', newsRoute)
 app.use('/auth', authRoute)
 app.use('/reset', passResetRoute)
 app.use('/pay_wallet', [verifyToken], paymentRoute)
