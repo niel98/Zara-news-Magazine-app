@@ -64,28 +64,28 @@ const increaseUserNewsCount = async(req, res) => {
 
     await news.save()
 
-    const readNewsId = await ReadList.findOne({ userId: req.user._id, newsId: req.params.newsId })
-    if(!readNewsId) {
-      await ReadList.create({
-        userId: req.user._id,
-        newsId: req.params.newsId,
-        count: 1
-      })
-    } else {
-      readNewsId.count += 1
+    // const readNewsId = await ReadList.findOne({ userId: req.user._id, newsId: req.params.newsId })
+    // if(!readNewsId) {
+    //   await ReadList.create({
+    //     userId: req.user._id,
+    //     newsId: req.params.newsId,
+    //     count: 1
+    //   })
+    // } else {
+    //   readNewsId.count += 1
 
-      await readNewsId.save()
-    }
+    //   await readNewsId.save()
+    // }
 
-    const user = await User.findById(req.user._id)
+    // const user = await User.findById(req.user._id)
 
-    //increment the news count
-    user.newsCount +=1
+    // //increment the news count
+    // user.newsCount +=1
 
-    await user.save()
+    // await user.save()
 
     console.log('News count Increased')
-    return res.status(200).json({ success: true, message: `News count increased to ${user.newsCount}`})
+    return res.status(200).json({ success: true, message: `News count increased to ${news.count}`})
 
   } catch (err) {
     console.log(err.message)
