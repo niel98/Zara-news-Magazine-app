@@ -52,11 +52,8 @@ const increaseUserNewsCount = async(req, res) => {
 
   await device_id.save()
 
-  //Get User id
-  // let user_id = await User.findById(req.user._id)
-
   //Check the device count
-  if (device_id.count >= 5) {
+  if (device_id.count >= 5 && !device_id.isSignedIn) {
     return res.send('Sign up and subscribe to continue reading the news articles')
   }
 

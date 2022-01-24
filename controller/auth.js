@@ -2,6 +2,8 @@ const User = require("../model/User")
 const argon2 = require('argon2')
 const jwt = require('jsonwebtoken')
 const _ = require('lodash')
+const Device = require("../model/Device")
+const { machineId, machineIdSync } = require('node-machine-id')
 require('dotenv').config()
 
 const signUp = async (req, res) => {
@@ -56,6 +58,23 @@ const signIn = async (req, res) => {
         }
 
         const token = jwt.sign({ _id: user.id }, process.env.JWT_SECRET)
+
+        //Get the device
+        let id = machineIdSync({ original: true })
+
+        let device_id = await Device.findOne({ device_id: id })
+        if (!device_id) {
+            device_id = await Device.create({
+            device_id: id,
+            })
+
+            await device_id.save()
+        }
+
+        //Set the device signed in to be true
+        device_id.isSignedIn = true
+
+        await device_id.save()
 
         res.status(200).json({ success: true, message: 'User signed in successfully.', data: { user:user, token } })
     } catch (err) {
