@@ -1,7 +1,11 @@
 const News = require("../model/News");
 const escapeString = require("escape-string-regexp");
+const { machineId, machineIdSync } = require('node-machine-id')
 const User = require("../model/User");
 const ReadList = require('../model/ReadList')
+const Device = require('../model/Device')
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 const getNews = async (req, res) => {
   try {
@@ -14,6 +18,8 @@ const getNews = async (req, res) => {
       }
     }
 
+    //Get the device id
+
     const news = await News.find(query);
     console.log("Query: ", req.query.category);
     console.log("News: ", news);
@@ -24,38 +30,37 @@ const getNews = async (req, res) => {
   }
 };
 
-// const findNewsById = async (req, res) => {
-//   try {
-//     const id = req.params.id;
-
-//     //Fetching the news Article
-//     let newsArticle = await News.findOne({ _id: id });
-//     console.log("Visitors: ", JSON.stringify(newsArticle));
-
-//     if (!newsArticle) {
-//       return res
-//         .status(404)
-//         .send({ success: false, message: "News with ID not found" });
-//     }
-
-//     //Increment the news count
-//     newsArticle.count += 1;
-
-//     await newsArticle.save();
-
-//     console.log(`News read ${newsArticle.count} times`);
-//     res
-//       .status(200)
-//       .json({ success: true, message: `News read ${newsArticle.count} times` });
-//   } catch (err) {
-//     console.log(err.message);
-//     res.status(500).json({ success: false, message: "Internal server error" });
-//   }
-// };
-
 const increaseUserNewsCount = async(req, res) => {
   try {
-    const news = await News.findById(req.params.newsId)
+
+  //Get the Device and increase the count
+  let id = machineIdSync({ original: true })
+  console.log('Device Id: ', id)
+
+  let device_id = await Device.findOne({ device_id: id })
+  if (!device_id) {
+    device_id = await Device.create({
+      device_id: id,
+      count: 1
+    })
+
+    await device_id.save()
+  }
+
+  //Increment the Device count
+  device_id.count += 1
+
+  await device_id.save()
+
+  //Get User id
+  // let user_id = await User.findById(req.user._id)
+
+  //Check the device count
+  if (device_id.count >= 5) {
+    return res.send('Sign up and subscribe to continue reading the news articles')
+  }
+
+  const news = await News.findById(req.params.newsId)
     if (!news) {
       return res.status(404).json({ success: false, message: 'News not found'})
     }
@@ -85,7 +90,10 @@ const increaseUserNewsCount = async(req, res) => {
     // await user.save()
 
     console.log('News count Increased')
-    return res.status(200).json({ success: true, message: `News count increased to ${news.count}`})
+    return res.status(200).json({ 
+      success: true, 
+      message: `News count increased to ${news.count}`
+    })
 
   } catch (err) {
     console.log(err.message)
