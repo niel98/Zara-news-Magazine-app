@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 5000
 app.use('/news', newsRoute)
 app.use('/auth', authRoute)
 app.use('/reset', passResetRoute)
-app.use('/pay_wallet', [verifyToken], paymentRoute)
+app.use('/pay_wallet', paymentRoute)
 
 app.get('/', (_, res) => {
     res.send('Hello World from Zarah Magazine!')

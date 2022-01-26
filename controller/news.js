@@ -52,9 +52,12 @@ const increaseUserNewsCount = async(req, res) => {
 
   await device_id.save()
 
+  console.log('Subscription status: ', device_id.subscription.isSubscribed)
+  console.log('Subscription Expiry date: ', device_id.subscription.expiresIn)
+
   //Check the device count
-  if (device_id.count >= 5 && !device_id.isSignedIn) {
-    return res.send('Sign up and subscribe to continue reading the news articles')
+  if (device_id.count >= 5 && !device_id.subscription.isSubscribed) {
+    return res.send('Please Subscribe to continue reading the news articles')
   }
 
   const news = await News.findById(req.params.newsId)

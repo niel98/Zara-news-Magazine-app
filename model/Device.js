@@ -12,6 +12,15 @@ const DeviceSchema = new mongoose.Schema({
     isSignedIn: {
         type: Boolean,
         default: false
+    },
+    subscription: {
+        isSubscribed: {
+            type: Boolean,
+            default: false
+        },
+        expiresIn: {
+            type: Date
+        }
     }
 })
 

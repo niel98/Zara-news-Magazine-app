@@ -22,7 +22,7 @@ const initiateTransaction = async (payload) => {
         console.log(`Bearer ${FLW_secKey}`)
         return response.data.data.link
     } catch (err) {
-        console.log(err.message)
+        console.log(err)
     }
 }
 

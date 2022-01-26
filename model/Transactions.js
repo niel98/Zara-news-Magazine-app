@@ -2,10 +2,10 @@ const mongoose = require('mongoose')
 // const User = require('../model/User')
 
 const TransactionSchema = new mongoose.Schema({
-    user: {
+    device_id: {
         type: mongoose.Schema.ObjectId,
         required: true,
-        ref: 'User'
+        ref: 'Device'
     },
     trans_ref: {
         type: String,

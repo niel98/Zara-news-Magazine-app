@@ -2,14 +2,16 @@ const FlutterWave = require('flutterwave-node-v3')
 const FLW_services = require('../services/flutterwave.services')
 const Transactions = require('../model/Transactions')
 const User = require('../model/User')
+const { machineId, machineIdSync } = require('node-machine-id')
 
 const moment = require('moment')
+const Device = require('../model/Device')
 
 const transRef = () => {
     const time = moment().format('YYY-MM-DD hh:mm:ss')
     const rand = Math.floor(Math.random() * Date.now())
 
-    return `Zarah|${time.replace(/[\-]|[\s]|[\:]/g, '')}|${rand}`
+    return `Zarah-${time.replace(/[\-]|[\s]|[\:]/g, '')}-${rand}`
 }
 
 let base_url = 'https://zarah-magazine-app.herokuapp.com' || 'http://localhost:5000'
@@ -26,8 +28,22 @@ const payment_wallet_mobile = async (req, res) => {
         const amount = 100
         const trans_ref = transRef()
 
+        //Get the current device
+        let id = machineIdSync({ original: true })
+        console.log('Device Id: ', id)
+
+        let device_id = await Device.findOne({ device_id: id })
+        if (!device_id) {
+            device_id = await Device.create({
+            device_id: id,
+            count: 1
+            })
+
+            await device_id.save()
+        }
+
     const transaction = await Transactions.create({
-        user: req.user.id,
+        device_id: device_id,
         trans_ref: trans_ref,
         currency,
         amount,
@@ -53,7 +69,7 @@ const payment_wallet_web = async (req, res) => {
     try {
         const currency = 'NGN'
         const amount = 100
-        const trans_ref = transRef
+        const trans_ref = transRef()
 
     //WEB APPROACH
     const payload = {
@@ -74,7 +90,32 @@ const payment_wallet_web = async (req, res) => {
         }
     }
 
+     //Get the current device
+     let id = machineIdSync({ original: true })
+     console.log('Device Id: ', id)
+
+     let device_id = await Device.findOne({ device_id: id })
+     if (!device_id) {
+         device_id = await Device.create({
+         device_id: id,
+         count: 1
+         })
+
+         await device_id.save()
+     }
+
+ const transaction = await Transactions.create({
+     device_id: device_id,
+     trans_ref: trans_ref,
+     currency,
+     amount,
+     status: 'initiated'
+ })
+
+ await transaction.save()
+
     const response = await FLW_services.initiateTransaction(payload)
+    console.log('link => ', response)
     return res.status(200).json({ success: true, message: 'Payment initiated...', link: response })
     } catch (err) {
         console.log(err.message)
@@ -98,20 +139,33 @@ const verify_payment_wallet = async (req, res) => {
 
     if (verify.status === 'success') {
         if (verify.data.status === 'successful') {
+             //Get the current device
+         let id = machineIdSync({ original: true })
+         console.log('Device Id: ', id)
+ 
+         let device_id = await Device.findOne({ device_id: id })
+         if (!device_id) {
+             device_id = await Device.create({
+             device_id: id,
+             count: 1
+             })
+ 
+             await device_id.save()
+         }
+        //Update subscription status of user Device to be true
+        let userDevice = await Device.findOne({ device_id: id })
+        if (!userDevice) {
+            return res.status(404).send('Device is invalid.')
+        }
+        
+        const expiresIn = moment().add(1, 'days').format()
+        userDevice.subscription.isSubscribed = true
+        userDevice.subscription.expiresIn = new Date(expiresIn)
+
+        await userDevice.save()
+
             return res.status(200).json({ success: true, message: 'Transaction successful'})
         }
-        
-        //Update subscription status of user to be true
-        const user = await User.findById(req.user._id)
-        if (!user) {
-            return res.status(404).send('User is invalid.')
-        }
-        
-        const expiresIn = moment().add(30, 'days').format
-        user.subscription.isSubscribed = true
-        user.subscription.expiresIn = new Date(expiresIn)
-
-        await user.save()
     } else {
         transaction.status ='failed'
         await transaction.save()
