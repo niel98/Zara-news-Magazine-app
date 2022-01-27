@@ -158,7 +158,7 @@ const verify_payment_wallet = async (req, res) => {
             return res.status(404).send('Device is invalid.')
         }
         
-        const expiresIn = moment().add(1, 'days').format()
+        const expiresIn = moment().add(30, 'days').format()
         userDevice.subscription.isSubscribed = true
         userDevice.subscription.expiresIn = new Date(expiresIn)
 
