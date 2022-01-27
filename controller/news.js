@@ -55,7 +55,13 @@ const increaseUserNewsCount = async(req, res) => {
   console.log('Subscription status: ', device_id.subscription.isSubscribed)
   console.log('Subscription Expiry date: ', device_id.subscription.expiresIn)
 
-  //Check the device count
+  //Check the device expiry date
+  if (device_id.subscription.expiresIn && new Date().getTime() < new Date(device_id.subscription.expiresIn).getTime()) {
+    device_id.subscription.isSubscribed = false
+
+    await device_id.save()
+}
+
   if (device_id.count >= 5 && !device_id.subscription.isSubscribed) {
     return res.send('Please Subscribe to continue reading the news articles')
   }
