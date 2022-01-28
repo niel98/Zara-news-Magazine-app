@@ -22,10 +22,10 @@ conn()
 
 const PORT = process.env.PORT || 5000
 
-app.use('/news', newsRoute)
-app.use('/auth', authRoute)
-app.use('/reset', passResetRoute)
-app.use('/pay_wallet', paymentRoute)
+app.use('/api/v1/news', newsRoute)
+app.use('/api/v1/auth', authRoute)
+app.use('/api/v1/reset', passResetRoute)
+app.use('/api/v1/pay_wallet', paymentRoute)
 
 app.get('/', (_, res) => {
     res.send('Hello World from Zarah Magazine!')
