@@ -3,9 +3,10 @@ const mongoose = require('mongoose')
 
 const TransactionSchema = new mongoose.Schema({
     device_id: {
-        type: mongoose.Schema.ObjectId,
+        type: String,
         required: true,
-        ref: 'Device'
+        unique: true
+        // ref: 'Device'
     },
     trans_ref: {
         type: String,

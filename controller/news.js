@@ -21,8 +21,6 @@ const getNews = async (req, res) => {
     //Get the device id
 
     const news = await News.find(query);
-    console.log("Query: ", req.query.category);
-    console.log("News: ", news);
     res.status(200).json({ success: true, data: news });
   } catch (error) {
     console.log(error.message);

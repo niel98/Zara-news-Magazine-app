@@ -29,26 +29,29 @@ const payment_wallet_mobile = async (req, res) => {
         const trans_ref = transRef()
 
         //Get the current device
-        let id = machineIdSync({ original: true })
+        const id = machineIdSync({ original: true })
         console.log('Device Id: ', id)
 
-        let device_id = await Device.findOne({ device_id: id })
-        if (!device_id) {
-            device_id = await Device.create({
+        let device = await Device.findOne({ device_id: id })
+        console.log({device})
+        if (!device) {
+            device = await Device.create({
             device_id: id,
             count: 1
             })
 
-            await device_id.save()
+            await device.save()
         }
 
     const transaction = await Transactions.create({
-        device_id: device_id,
+        device_id: device.device_id,
         trans_ref: trans_ref,
         currency,
         amount,
         status: 'initiated'
     })
+
+    // await transaction.save()
 
     res.send({
         success: true,
@@ -158,13 +161,13 @@ const verify_payment_wallet = async (req, res) => {
             return res.status(404).send('Device is invalid.')
         }
         
-        const expiresIn = moment().add(30, 'days').format()
+        const expiresIn = moment().add(30, 'days').format('YYYY-MM-DD')
         userDevice.subscription.isSubscribed = true
         userDevice.subscription.expiresIn = new Date(expiresIn)
 
         await userDevice.save()
 
-            return res.status(200).json({ success: true, message: 'Transaction successful'})
+        return res.status(200).json({ success: true, message: 'Transaction successful'})
         }
     } else {
         transaction.status ='failed'
